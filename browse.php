@@ -10,20 +10,28 @@
     <!-- LOCAL CSS -->
     <link rel="stylesheet" href="style.css">
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Sprzątando</title>
 </head>
 <body>
+<?php
+session_start();
+
+if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+    header("location: login.php");
+    exit;
+} else {
+    echo "jd";
+}
+?>
     <div class="container">
 
         <!-- UPPER PASEK -->
         <div class="row">
             <div class="col-lg-2">
-                <a href="sasxca.html" style="color: black"><small>Pomoc i kontakt</small></a>
+                <small>Pomoc i kontakt</small>
             </div>
             <div class="col-lg-8 align-c">
                 <small>Takie allegro ale ze sprzątaniem</small>
@@ -57,7 +65,17 @@
                     <li class="nav-item">
                         <a class="nav-link" href="addogl.php">Dodaj ogłoszenie</a>
                     </li>
-                   
+                    <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Dropdown
+                      </a>
+                      <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#">Action</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                      </div>
+                    </li>
                   </ul>
                   <form class="form-inline my-2 my-lg-0">
                     <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
@@ -66,91 +84,31 @@
                 </div>
         </nav>
 
-    
-
-        <!-- SORTOWANIE i FILTROWANIE -->
-        <div class="row" style="margin-top: 10px;">
-            <div class="col-lg-9">
-                <button type="button" class="btn" style="background: white" id="filtr-btn">Filtrowanie</button>
+        <div class="row">
+            <div class="col-lg-12" style="margin-top: 10px;">
+            <div class="dropdown">
+                <button class="btn btn-light dropdown-toggle float-right" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Sortuj według
+                </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="#">Nazwy ogłoszenia (a-z)</a>
+                        <a class="dropdown-item" href="#">Ceny (rosnąco)</a>
+                        <a class="dropdown-item" href="#">Ceny (malejąco)</a>
+                    </div>
             </div>
-
-            <div class="col-lg-3 ">
-                <select class="custom-select" onchange="sortuj(this.value)">
-                        <option selected value=""> Sortuj według </option>
-                        <option value="nazwami">Nazwy ogłoszenia (a-z)</option>
-                        <option value="cenyr">Ceny (rosnąco)</option>
-                        <option value="cenym">Ceny (malejąco)</option>
-                </select>
             </div>
-        </div>
-
-        <div class="row" id="filtrowanie">
-            <form>
-                <div class="row">
-                    <div class="form-group col-md-1">
-                    <label for="inputEmail4">Cena:</label>
-                    <input type="text" class="form-control" value="0" id="cenaod">
-                    </div>
-                    <div class="col-md-1">
-                    <p style="margin-top:40px; margin-left: 10px"> od - do </p>
-                    </div>
-                    <div class="form-group col-md-1">
-                    <input type="text" class="form-control" id="cenado" value="9999" style="margin-top: 35px">
-                    </div>
-                </div>
-                <p>Usługi:</p>
-                <div class="col-lg-4" style='margin-top: 15px'>
-                    <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text">
-                                <input type="checkbox" name="filtr-okna" aria-label="Checkbox for following text input">
-                                </div>
-                            </div>
-                                <div class="form-control">
-                                    Mycie okien
-                                </div>
-                            </div>
-                </div>
-                <div class="col-lg-4">
-                        <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">
-                                    <input type="checkbox" name="filtr-podlogi" aria-label="Checkbox for following text input">
-                                    </div>
-                                </div>
-                                    <div class="form-control">
-                                        Mycie podłóg
-                                    </div>
-                                </div>
-                </div>
-                <div class="col-lg-4">
-                        <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">
-                                    <input type="checkbox" name="filtr-zaslony" aria-label="Checkbox for following text input">
-                                    </div>
-                                </div>
-                                    <div class="form-control">
-                                        Pranie zasłon
-                                    </div>
-                        </div>
-                </div>
-
-                <div class="col-lg-2 offset-lg-3" style="padding: 10px;">
-                    <button type="submit" class="btn btn-primary">Filtruj</button>
-                </div>
-            </form>
         </div>
 
 
         <div class="row" id="oglo">
-                <div class="card-columns"id="oglo">
+                <div class="card-columns">
                 <?php
+                    require_once "config.php";
                     // Create and check connection
-                    $conn = new mysqli("localhost","root","","cleanapp") or die("Connect failed: %s\n". $conn -> error);
+                    
 
-                    $query = "SELECT ad_id, ad_name, username, kitchen, bathroom, bedroom, garage, price FROM ogloszenia ORDER BY ad_id";
-                    $result = $conn->query($query);
+                    $query = "SELECT ad_name, username, kitchen, bathroom, bedroom, garage, price FROM ogloszenia";
+                    $result = $mysqli->query($query);
 
 
                     if ($result->num_rows > 0) {
@@ -161,7 +119,7 @@
 
                             echo '<div class="card og-card" style="width: 21rem;">
                                     <div class="card-body">
-                                        <h5 class="card-title" id="card_title">'.$row["ad_name"].'</h5>
+                                        <h5 class="card-title">'.$row["ad_name"].'</h5>
                                         <h6 class="card-subtitle mb-2 text-muted">'.$row["username"].'</h6>
                                     </div>    
                                         <ul class="list-group list-group-flush">
@@ -172,82 +130,23 @@
                                         </ul>
                                     <div class="card-body">
                                         <p class="card-text">Cena: '.$row["price"].'.00 zł</p>
-                                        <button type="button" class="btn btn-outline-primary open-modal-btn" data-toggle="modal" data-target="#exampleModal" data-id="'.$row["ad_id"].'" style="float: right; margin-bottom: 20px;">Otwórz</button>
+                                        <a href="#" class="card-link" style="float: right; margin-bottom: 20px;">Otwórz</a>
                                     </div>
                                     
-                                  </div>                                
-                                  ';
+                                  </div>';
                         }
-
                     } else {
                         echo "0 results";
                     }
 
-                    $conn->close();
+                    $mysqli->close();
                     ?>
                 </div>
         </div>
 
-        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content"id="modalcontainer">
-                
-                <!-- TUTAJ WLATUJE RESPONSE Z AJAXA NA MODAL  -->
-
-                </div>
-            </div>
-        </div>
         
     </div>
 
-<script>
-                $(document).ready(function(){
-                    $('#filtr-btn').click(function(){
-                        $('#filtrowanie').toggle(500);
-                    });
-                    
-                    $(".open-modal-btn").click(function () {
-                    var my_id_value = $(this).data('id');
-                        showOgl(my_id_value);
-                    });
-                
-                });
-
-
-                
-                function sortuj(wybrane){
-                let xhttp;
-                    if(wybrane==""){
-                        return;
-                    } 
-                xhttp = new XMLHttpRequest();
-                xhttp.onreadystatechange = function() {
-                    if (this.readyState == 4 && this.status == 200) {
-                             $('#oglo').html("");
-                             $('#oglo').html(this.responseText);
-                        }
-                    };
-                    
-                xhttp.open("GET", "sortogl.php?q="+wybrane, true);
-                xhttp.send();
-                }
-
-
-                //funkcja do wyświetlania modalu
-                function showOgl(str) {
-                let xhttp;    
-                xhttp = new XMLHttpRequest();
-                xhttp.onreadystatechange = function() {
-                    if (this.readyState == 4 && this.status == 200) {
-                             $("#modalcontainer").html(this.responseText);
-                        }
-                    };
-                    
-                xhttp.open("GET", "getmodal.php?q="+str, true);
-                xhttp.send();
-                }
-
-</script>
 
     <!-- INCLUDE BOOTSTRAP JS ECT -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
