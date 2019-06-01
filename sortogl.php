@@ -1,6 +1,6 @@
 <?php
 // Create and check connection
-    $conn = new mysqli("localhost","root","","cleanapp") or die("Connect failed: %s\n". $conn -> error);
+    $conn = new mysqli("localhost","root","","cleanup") or die("Connect failed: %s\n". $conn -> error);
 
     $parameter = "";
     $q = $_GET['q'];
