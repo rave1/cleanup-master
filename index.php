@@ -25,6 +25,7 @@
 
                       <button type="submit" class="btn btn-primary">Wyślij</button>
                         <a href="login.php">Login</a>
+                        test
 
 
 <?php
