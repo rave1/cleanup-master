@@ -1,15 +1,12 @@
-.login{
-    margin-top: 300px;
-    width: 40%;
+
+body{
+    background: #f2f2f2;
 }
 
-.btn{
-    margin-bottom: 15px;
-}
 .logo-theme-box{
     text-align: center;
     vertical-align: middle;
-    background: #f2f2f2;
+    background: white;
     height: 80px;
     padding: 20px;
 }
@@ -17,7 +14,7 @@
 .logo-theme-box-ic{
     text-align: center;
     vertical-align: middle;
-    background: #f2f2f2;
+    background: white;
     height: 80px;
     padding: 10px;
 }
@@ -55,6 +52,12 @@
 .og-card{
     margin: 15px;
     display: flex;
+}
+
+#filtrowanie{
+    margin-left: 20px; 
+    margin-top: 25px;
+    display: none;
 }
 
 
